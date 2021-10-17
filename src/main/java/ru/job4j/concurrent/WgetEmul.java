@@ -4,32 +4,40 @@ import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class WgetEmul implements Runnable {
     private final String url;
     private final int speed;
 
     public WgetEmul(String url, int speed) {
-        this.url = url;
-        this.speed = speed;
+            checkParam(url, speed);
+            this.url = url;
+            this.speed = speed;
+    }
+
+    public void checkParam(String url, int speed) {
+        if (speed < 0 || speed > 20) {
+            throw new IllegalArgumentException("Speed cannot be < 0 or > 20!");
+        } else if (!checkURL()) {
+            throw new IllegalArgumentException("Broken Link!");
+        }
+    }
+
+    public boolean checkURL() {
+        return true;
     }
 
     @Override
     public void run() {
-        Date startDate = new Date();
-        var startTime = startDate.getTime();
-        String file = "https://raw.githubusercontent.com/peterarsentev/course_test/master/pom.xml";
-        try (BufferedInputStream in = new BufferedInputStream(new URL(file).openStream());
+        try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
              FileOutputStream fileOutputStream = new FileOutputStream("pom_tmp.xml")) {
             byte[] dataBuffer = new byte[1024];
             int bytesRead;
+            var startTime = System.currentTimeMillis();
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
-                Date currentDate = new Date();
-                var currentTime = currentDate.getTime();
-                var diffMillis = TimeUnit.MILLISECONDS.toMillis(currentTime - startTime);
+                var currentTime =  System.currentTimeMillis();
+                var diffMillis = currentTime - startTime;
                 long speedMillis = 1000 / speed;
                 if (diffMillis < speedMillis) {
                     Thread.sleep(speedMillis - diffMillis);
