@@ -5,8 +5,8 @@ public class ConsoleProgress implements Runnable {
     public void run() {
         String[] process = new String[]{"\\", "|", "/"};
         while (!Thread.currentThread().isInterrupted()) {
-            for (int index = 0; index < process.length; index++) {
-                System.out.print("\r load: " + process[index]);
+            for (var elm : process) {
+                System.out.print("\r load: " + elm);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
@@ -19,7 +19,7 @@ public class ConsoleProgress implements Runnable {
     public static void main(String[] args) throws InterruptedException {
         Thread progress = new Thread(new ConsoleProgress());
         progress.start();
-        Thread.sleep(50000); /* симулируем выполнение параллельной задачи в течение 1 секунды. */
+        Thread.sleep(5000); /* симулируем выполнение параллельной задачи в течение 1 секунды. */
         progress.interrupt();
     }
 }
