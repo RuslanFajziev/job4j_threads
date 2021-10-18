@@ -42,6 +42,7 @@ public class WgetEmul implements Runnable {
                 if (diffMillis < speedMillis) {
                     Thread.sleep(speedMillis - diffMillis);
                 }
+                startTime = System.currentTimeMillis();
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
