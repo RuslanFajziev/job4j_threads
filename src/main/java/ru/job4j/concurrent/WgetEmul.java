@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import org.apache.commons.validator.routines.UrlValidator;
 
 public class WgetEmul implements Runnable {
     private final String url;
@@ -19,14 +18,13 @@ public class WgetEmul implements Runnable {
     public void checkParam(String url, int speed) {
         if (speed < 0 || speed > 20) {
             throw new IllegalArgumentException("Speed cannot be < 0 or > 20!");
-        } else if (!checkURL(url)) {
+        } else if (!checkURL()) {
             throw new IllegalArgumentException("Broken Link!");
         }
     }
 
-    public boolean checkURL(String url) {
-        UrlValidator defaultValidator = new UrlValidator();
-        return defaultValidator.isValid(url);
+    public boolean checkURL() {
+        return true;
     }
 
     @Override
