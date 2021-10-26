@@ -17,12 +17,7 @@ public class UserStorage {
 
     public synchronized boolean add(User user) {
         Integer id = user.getId();
-        if (find(id)) {
-            return false;
-        } else {
-            storage.put(id, user);
-            return true;
-        }
+        return storage.putIfAbsent(id, user) == null;
     }
 
     public synchronized boolean delete(User user) {
@@ -31,7 +26,7 @@ public class UserStorage {
 
     public synchronized boolean update(User user) {
         Integer id = user.getId();
-        if (find(id)) {
+        if (storage.containsKey(id)) {
             storage.put(id, user);
             return true;
         } else {
@@ -40,20 +35,19 @@ public class UserStorage {
     }
 
     public synchronized boolean transfer(int fromId, int toId, int amount) {
-        Boolean input = find(fromId);
-        Boolean output = find(toId);
-        if (input && output) {
-            int inputUserAmount = storage.get(fromId).getAmount();
-            if (inputUserAmount >= amount) {
-                int outputUserAmount = storage.get(toId).getAmount();
-                User newUserInput = new User(fromId, inputUserAmount - amount);
-                User newUserOutput = new User(toId, outputUserAmount + amount);
-                update(newUserInput);
-                update(newUserOutput);
+        User inUser = storage.get(fromId);
+        User toUser = storage.get(toId);
+        if (inUser != null && toUser != null) {
+            int inAmount = inUser.getAmount();
+            int toAmount = toUser.getAmount();
+            if (inAmount >= amount) {
+                inUser = new User(fromId, inAmount - amount);
+                toUser = new User(toId, toAmount + amount);
+                update(inUser);
+                update(toUser);
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
         return false;
     }
