@@ -3,8 +3,8 @@ package ru.job4j.concurrent.jcip.users;
 import java.util.Objects;
 
 public class User {
-    private final int id;
-    private final int amount;
+    private int id;
+    private int amount;
 
     public User(int id, int amount) {
         this.id = id;
@@ -17,6 +17,14 @@ public class User {
 
     public int getAmount() {
         return amount;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
     @Override

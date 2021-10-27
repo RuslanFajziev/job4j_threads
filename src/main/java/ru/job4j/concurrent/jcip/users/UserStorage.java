@@ -11,10 +11,6 @@ public class UserStorage {
     @GuardedBy("this")
     private final Map<Integer, User> storage = new HashMap<>();
 
-    private synchronized boolean find(Integer key) {
-        return storage.containsKey(key);
-    }
-
     public synchronized boolean add(User user) {
         Integer id = user.getId();
         return storage.putIfAbsent(id, user) == null;
@@ -26,12 +22,7 @@ public class UserStorage {
 
     public synchronized boolean update(User user) {
         Integer id = user.getId();
-        if (storage.containsKey(id)) {
-            storage.put(id, user);
-            return true;
-        } else {
-            return false;
-        }
+        return storage.replace(id, storage.get(id), user);
     }
 
     public synchronized boolean transfer(int fromId, int toId, int amount) {
@@ -41,10 +32,8 @@ public class UserStorage {
             int inAmount = inUser.getAmount();
             int toAmount = toUser.getAmount();
             if (inAmount >= amount) {
-                inUser = new User(fromId, inAmount - amount);
-                toUser = new User(toId, toAmount + amount);
-                update(inUser);
-                update(toUser);
+                storage.get(fromId).setAmount(inAmount - amount);
+                storage.get(toId).setAmount(toAmount + amount);
                 return true;
             }
             return false;
