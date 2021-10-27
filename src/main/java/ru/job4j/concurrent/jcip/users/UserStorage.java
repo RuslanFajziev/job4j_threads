@@ -32,8 +32,8 @@ public class UserStorage {
             int inAmount = inUser.getAmount();
             int toAmount = toUser.getAmount();
             if (inAmount >= amount) {
-                storage.get(fromId).setAmount(inAmount - amount);
-                storage.get(toId).setAmount(toAmount + amount);
+                inUser.setAmount(inAmount - amount);
+                toUser.setAmount(toAmount + amount);
                 return true;
             }
             return false;
