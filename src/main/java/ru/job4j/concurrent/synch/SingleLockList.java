@@ -10,8 +10,8 @@ public class SingleLockList<T> implements Iterable<T> {
     @GuardedBy("this")
     private final List<T> list;
 
-    public SingleLockList(ArrayList<T> list) {
-        this.list = (List) list.clone();
+    public SingleLockList(List<T> list) {
+        this.list = copy(list);
     }
 
     public synchronized void add(T value) {
@@ -22,8 +22,8 @@ public class SingleLockList<T> implements Iterable<T> {
         return list.get(index);
     }
 
-    private Set<T> copy(List<T> list) {
-        return new HashSet<>(list);
+    private List<T> copy(List<T> list) {
+        return new ArrayList<>(list);
     }
 
     @Override
