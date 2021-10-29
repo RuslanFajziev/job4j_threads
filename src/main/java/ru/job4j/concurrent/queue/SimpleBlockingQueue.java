@@ -8,33 +8,26 @@ import java.util.Queue;
 
 @ThreadSafe
 public class SimpleBlockingQueue<T> {
-    private int maxElmQueue = 5;
-    private int currentElmQueue = 0;
     @GuardedBy("this")
     private Queue<T> queue = new LinkedList<>();
+    private int maxElmQueue;
 
-    public synchronized void offer(T value) {
-        while (currentElmQueue == maxElmQueue) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+    public SimpleBlockingQueue(int maxElmQueue) {
+        this.maxElmQueue = maxElmQueue;
+    }
+
+    public synchronized void offer(T value) throws InterruptedException {
+        while (queue.size() == maxElmQueue) {
+            this.wait();
         }
         queue.add(value);
-        currentElmQueue++;
         this.notifyAll();
     }
 
-    public synchronized T poll() {
-        while (currentElmQueue == 0) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+    public synchronized T poll() throws InterruptedException {
+        while (queue.size() == 0) {
+            this.wait();
         }
-        currentElmQueue--;
         this.notifyAll();
         return queue.poll();
     }

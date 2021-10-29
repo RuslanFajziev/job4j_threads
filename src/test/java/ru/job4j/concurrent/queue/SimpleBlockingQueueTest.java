@@ -7,15 +7,23 @@ import static org.junit.Assert.assertEquals;
 public class SimpleBlockingQueueTest {
     @Test
     public void test() throws InterruptedException {
-        SimpleBlockingQueue<Integer> simpleBlockingQueue = new SimpleBlockingQueue<>();
+        SimpleBlockingQueue<Integer> simpleBlockingQueue = new SimpleBlockingQueue<>(5);
         Thread first = new Thread(() -> {
-            simpleBlockingQueue.offer(1);
-            simpleBlockingQueue.offer(2);
-            simpleBlockingQueue.offer(3);
+            try {
+                simpleBlockingQueue.offer(1);
+                simpleBlockingQueue.offer(2);
+                simpleBlockingQueue.offer(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }, "Master");
         Thread second = new Thread(() -> {
-            simpleBlockingQueue.poll();
-            simpleBlockingQueue.poll();
+            try {
+                simpleBlockingQueue.poll();
+                simpleBlockingQueue.poll();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }, "Slave");
         first.start();
         second.start();
