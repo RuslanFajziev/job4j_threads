@@ -16,6 +16,10 @@ public class SimpleBlockingQueue<T> {
         this.maxElmQueue = maxElmQueue;
     }
 
+    public synchronized Boolean isEmpty() {
+        return queue.isEmpty();
+    }
+
     public synchronized void offer(T value) throws InterruptedException {
         while (queue.size() == maxElmQueue) {
             this.wait();
