@@ -2,7 +2,6 @@ package ru.job4j.concurrent.cas;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 
 public class ConcurrentCache {
     private final Map<Integer, Base> memory = new ConcurrentHashMap<>();
@@ -12,20 +11,15 @@ public class ConcurrentCache {
     }
 
     public boolean update(Base model) {
-        BiFunction<Integer, Base, Base> biFunction = new BiFunction<Integer, Base, Base>() {
-            @Override
-            public Base apply(Integer integer, Base cacheBase) {
-                int cacheBaseVersion = cacheBase.getVersion();
-                if (cacheBaseVersion != model.getVersion()) {
-                    throw new OptimisticException("Versions are not equal");
-                }
-                Base outputBase = new Base(cacheBase.getId(), cacheBaseVersion + 1);
-                outputBase.setName(model.getName());
-                return outputBase;
+        return memory.computeIfPresent(model.getId(), (k, v) -> {
+            int cacheBaseVersion = v.getVersion();
+            if (cacheBaseVersion != model.getVersion()) {
+                throw new OptimisticException("Versions are not equal");
             }
-        };
-        memory.computeIfPresent(model.getId(), biFunction);
-        return true;
+            Base outputBase = new Base(v.getId(), cacheBaseVersion + 1);
+            outputBase.setName(model.getName());
+            return outputBase;
+        }) == null;
     }
 
     public void delete(Base model) {
