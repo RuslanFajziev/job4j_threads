@@ -19,7 +19,7 @@ public class ConcurrentCache {
             Base outputBase = new Base(v.getId(), cacheBaseVersion + 1);
             outputBase.setName(model.getName());
             return outputBase;
-        }) == null;
+        }) != null;
     }
 
     public void delete(Base model) {

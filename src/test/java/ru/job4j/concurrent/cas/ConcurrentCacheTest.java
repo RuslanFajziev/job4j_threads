@@ -39,4 +39,15 @@ public class ConcurrentCacheTest {
         cache.add(model1);
         cache.update(model2);
     }
+
+    @Test
+    public void test4() {
+        Base model1 = new Base(1, 1);
+        model1.setName("Model1");
+        Base model2 = new Base(2, 1);
+        model2.setName("Model2");
+        ConcurrentCache cache = new ConcurrentCache();
+        cache.add(model1);
+        assertFalse(cache.update(model2));
+    }
 }
