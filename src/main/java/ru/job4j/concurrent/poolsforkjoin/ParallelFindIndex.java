@@ -6,30 +6,34 @@ import java.util.concurrent.RecursiveTask;
 public class ParallelFindIndex extends RecursiveTask<Integer> {
     private final User[] arrayUsr;
     private final int index;
+    private final int from;
+    private final int to;
 
-    public ParallelFindIndex(User[] arrayUsr, int index) {
+    public ParallelFindIndex(User[] arrayUsr, int index, int from, int to) {
         this.arrayUsr = arrayUsr;
         this.index = index;
+        this.from = from;
+        this.to = to;
     }
 
     @Override
     protected Integer compute() {
-        if (arrayUsr.length <= 10) {
-            for (User usr : arrayUsr) {
-                if (usr.getIndex() == index) {
-                    return usr.getIndex();
+        if (to - from <= 10) {
+            for (int idx = from; idx <= to; idx++) {
+                if (arrayUsr[idx].getIndex() == index) {
+                    return arrayUsr[idx].getIndex();
                 }
             }
             return -1;
         }
-        ParallelFindIndex leftFind = new ParallelFindIndex(Arrays.copyOfRange(arrayUsr, 0, arrayUsr.length / 2), index);
-        ParallelFindIndex rightFind = new ParallelFindIndex(Arrays.copyOfRange(arrayUsr, arrayUsr.length / 2 + 1, arrayUsr.length), index);
+        int mid = (from + to) / 2;
+        ParallelFindIndex leftFind = new ParallelFindIndex(arrayUsr, index, from, mid);
+        ParallelFindIndex rightFind = new ParallelFindIndex(arrayUsr, index, mid + 1, to);
         leftFind.fork();
         rightFind.fork();
         int leftResult = leftFind.join();
         int rightResult = rightFind.join();
-        int result = leftResult >= rightResult ? leftResult : rightResult;
-        return result;
+        return Math.max(leftResult, rightResult);
     }
 }
 
