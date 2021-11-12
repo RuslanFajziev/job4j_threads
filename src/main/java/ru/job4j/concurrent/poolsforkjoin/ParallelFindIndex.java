@@ -4,13 +4,13 @@ import java.util.concurrent.RecursiveTask;
 
 public class ParallelFindIndex<T> extends RecursiveTask<Integer> {
     private final T[] arrayT;
-    private final int index;
+    private final T elmFind;
     private final int from;
     private final int to;
 
-    public ParallelFindIndex(T[] arrayT, int index, int from, int to) {
+    public ParallelFindIndex(T[] arrayT, T elmFind, int from, int to) {
         this.arrayT = arrayT;
-        this.index = index;
+        this.elmFind = elmFind;
         this.from = from;
         this.to = to;
     }
@@ -19,15 +19,15 @@ public class ParallelFindIndex<T> extends RecursiveTask<Integer> {
     protected Integer compute() {
         if (to - from <= 10) {
             for (int idx = from; idx <= to; idx++) {
-                if (idx == index) {
+                if (arrayT[idx].equals(elmFind)) {
                     return idx;
                 }
             }
             return -1;
         }
         int mid = (from + to) / 2;
-        ParallelFindIndex<T> leftFind = new ParallelFindIndex<>(arrayT, index, from, mid);
-        ParallelFindIndex<T> rightFind = new ParallelFindIndex<>(arrayT, index, mid + 1, to);
+        ParallelFindIndex<T> leftFind = new ParallelFindIndex<>(arrayT, elmFind, from, mid);
+        ParallelFindIndex<T> rightFind = new ParallelFindIndex<>(arrayT, elmFind, mid + 1, to);
         leftFind.fork();
         rightFind.fork();
         int leftResult = leftFind.join();
