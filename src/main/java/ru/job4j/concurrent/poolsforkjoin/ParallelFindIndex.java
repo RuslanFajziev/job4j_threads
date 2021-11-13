@@ -18,7 +18,7 @@ public class ParallelFindIndex<T> extends RecursiveTask<Integer> {
     @Override
     protected Integer compute() {
         if (to - from <= 10) {
-            for (int idx = from; idx <= to; idx++) {
+            for (int idx = from; idx < to; idx++) {
                 if (arrayT[idx].equals(elmFind)) {
                     return idx;
                 }
